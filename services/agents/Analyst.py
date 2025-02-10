@@ -1,12 +1,17 @@
 import json
 import pprint as pp
 import os
+import dotenv
 # from services.agents.Agent import Agent
 # from services.util import tickers
 from Agent import Agent
 # from util import tickers
 
+
+# python3 services/agents/Analyst.py
+dotenv.load_dotenv()
 key = os.getenv("DCF_API_KEY")
+
 
 class Analyst(Agent):
 

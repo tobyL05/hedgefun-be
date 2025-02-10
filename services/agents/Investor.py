@@ -44,7 +44,7 @@ class Investor(Agent):
             "META": 0
         }
 
-        self.get_price_data()
+        self.get_price_data("2020-09-11")
 
     # TODO: prevent negative cashafter transactions
     def generate_prompt(self, **kwargs):
@@ -116,7 +116,7 @@ class Investor(Agent):
             {self.balance_sheet_insights}
             """
     
-    def get_price_data(self):
+    def get_price_data(self, date):
         for ticker in self.tickers:
             file_name = f"historical_data_{ticker}.csv"
             with open(os.path.join(os.getcwd(),"data",file_name)) as csv:
@@ -137,7 +137,7 @@ class Investor(Agent):
         # #     stock_data=self.stock_data,
         # #     holdings=self.holdings
         # )
-        return super().query(prompt).text
+        return super().query(prompt)
 
     def set_fund(self,fund):
         self.fund = fund
@@ -148,8 +148,12 @@ class Investor(Agent):
     def sell(self, symbol, quantity):
         self.holdings[symbol] -= quantity
 
+#             {self.stock_data}
+
+# python3 services/agents/Investor.py
 if __name__ == "__main__":
     Buffet = Investor("Warren Buffet", 1000000, "A disciplined value investor seeking undervalued companies with strong fundamentals.", "Value", "Moderate", "P/E ratio below industry average and positive free cash flow.", "Stock price reaches target price or P/E ratio exceeds industry average.", "Formal and analytical", "Detailed explanations are required.")
+    
     pp.pprint(Buffet.query(Buffet.generate_prompt(fund=10000.0, date="2020-09-11")))
 
     
