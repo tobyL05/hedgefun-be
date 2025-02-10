@@ -1,3 +1,4 @@
+import json
 from services.agents.Investor import Investor
 from services.agents.Analyst import Analyst
 
@@ -7,7 +8,7 @@ Ackman = Investor("Bill Ackman", 1000000, "A contrarian investor focused on acti
 Burry = Investor("Michael Burry", 1000000, "A deep-value investor with a focus on identifying market bubbles and distressed assets.", "Deep Value", "High", "Severely mispriced assets, market inefficiencies, and asymmetric risk-reward opportunities.", "Market correction occurs or thesis is realized.", "Blunt and data-driven", "Highly detailed explanations are required.")
 Hwang = Investor("Bill Hwang", 1000000, "A high-conviction investor leveraging significant leverage to build concentrated positions in growth stocks.", "High-Leverage Growth", "Very High", "High-growth companies with strong momentum and scalable business models.", "Forced liquidation, regulatory intervention, or fundamental thesis breakdown.", "Confident and faith-driven", "Moderate explanations with a focus on conviction over detailed analysis.")
 
-def trade(role, funds):
+def trade(role, funds, date):
     investor = None
     match role:
         case "warren_buffet":
@@ -24,6 +25,10 @@ def trade(role, funds):
             return { "Error": "Bad Request"}, 400
 
     investor.set_fund(funds)
-    investor.trade()
+
+    res = investor.trade(funds, date)
+    res = res[7:-3].strip()  # Remove ```json and ``` markers
+    return json.loads(res)
+
             
 

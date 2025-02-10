@@ -2,9 +2,8 @@ import json
 import pprint as pp
 import os
 import dotenv
-# from services.agents.Agent import Agent
-# from services.util import tickers
-from Agent import Agent
+from services.agents.Agent import Agent
+# from Agent import Agent
 # from util import tickers
 
 

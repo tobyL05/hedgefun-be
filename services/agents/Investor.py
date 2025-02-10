@@ -2,12 +2,12 @@ import datetime
 import os
 import pandas as pd
 import pprint as pp
-from Agent import Agent
-from Analyst import Analyst
+# from Agent import Agent
+# from Analyst import Analyst
 # from util import tickers
-# from services.agents.Agent import Agent
-# from services.agents.Analyst import Analyst
-# from services.util import tickers
+from services.agents.Agent import Agent
+from services.agents.Analyst import Analyst
+from services.util import tickers
 
 class Investor(Agent):
     def __init__(self, name, fund, description, investment_style, risk_tolerance, entry_criteria, exit_criteria, prompt_style, explainability_preference):
@@ -23,7 +23,7 @@ class Investor(Agent):
         self.prompt_style = prompt_style
         self.explainability_preference = explainability_preference
         self.balance_sheet_insights = Analyst().get_analysis()
-        pp.pprint(self.balance_sheet_insights)
+        # pp.pprint(self.balance_sheet_insights)
         self.stock_data = {
             "AAPL": None,
             "MSFT": None,
@@ -44,7 +44,7 @@ class Investor(Agent):
             "META": 0
         }
 
-        self.get_price_data("2020-09-11")
+        self.get_price_data()
 
     # TODO: prevent negative cashafter transactions
     def generate_prompt(self, **kwargs):
@@ -75,7 +75,7 @@ class Investor(Agent):
             Core Characteristics:
             - Investment Style: {self.investment_style}
             - Risk Tolerance: {self.risk_tolerance}
-            - Available Cash: ${fund:,.2f}
+            - Available Cash: ${fund}
         
             Current Portfolio: {holdings_str}
         
@@ -116,7 +116,7 @@ class Investor(Agent):
             {self.balance_sheet_insights}
             """
     
-    def get_price_data(self, date):
+    def get_price_data(self):
         for ticker in self.tickers:
             file_name = f"historical_data_{ticker}.csv"
             with open(os.path.join(os.getcwd(),"data",file_name)) as csv:
@@ -124,19 +124,6 @@ class Investor(Agent):
                 self.stock_data[ticker] = data.to_string()
 
     def query(self, prompt):
-        # # prompt = self.generate_prompt(
-        # #     name=self.name,
-        # #     description=self.description,
-        # #     investment_style=self.investment_style,
-        # #     risk_tolerance=self.risk_tolerance,
-        # #     fund=self.fund,
-        # #     entry_criteria=self.entry_criteria,
-        # #     exit_criteria=self.exit_criteria,
-        # #     prompt_style=self.prompt_style,
-        # #     explainability_preference=self.explainability_preference,
-        # #     stock_data=self.stock_data,
-        # #     holdings=self.holdings
-        # )
         return super().query(prompt)
 
     def set_fund(self,fund):
@@ -147,13 +134,16 @@ class Investor(Agent):
     
     def sell(self, symbol, quantity):
         self.holdings[symbol] -= quantity
+    
+    def trade(self, funds, date):
+        return self.query(self.generate_prompt(fund=funds, date=date))
 
-#             {self.stock_data}
+
 
 # python3 services/agents/Investor.py
 if __name__ == "__main__":
     Buffet = Investor("Warren Buffet", 1000000, "A disciplined value investor seeking undervalued companies with strong fundamentals.", "Value", "Moderate", "P/E ratio below industry average and positive free cash flow.", "Stock price reaches target price or P/E ratio exceeds industry average.", "Formal and analytical", "Detailed explanations are required.")
-    
+
     pp.pprint(Buffet.query(Buffet.generate_prompt(fund=10000.0, date="2020-09-11")))
 
     

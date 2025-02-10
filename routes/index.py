@@ -20,4 +20,5 @@ def generate():
     params = request.args
     role = params["role"]
     funds = params["funds"]
-    return trade(role, funds)
+    date = params["date"]
+    return trade(role, funds, date)
